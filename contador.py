@@ -7,7 +7,13 @@ from pypdf import PdfReader
 
 
 def ler_txt(caminho: Path) -> str:
-    return caminho.read_text(encoding="utf-8")
+    bruto = caminho.read_bytes()
+    for encoding in ("utf-8-sig", "cp1252"):
+        try:
+            return bruto.decode(encoding)
+        except UnicodeDecodeError:
+            continue
+    return bruto.decode("utf-8", errors="replace")
 
 
 def ler_docx(caminho: Path) -> str:
